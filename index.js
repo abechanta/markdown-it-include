@@ -44,7 +44,8 @@ module.exports = function include_plugin(md, options) {
   }
 
   function _includeFileParts(state) {
-    state.src = _replaceIncludeByContent(state.src, root);
+    const rootdir = typeof root === "function" ? root() : root;
+    state.src = _replaceIncludeByContent(state.src, rootdir);
   }
 
   md.core.ruler.before('normalize', 'include', _includeFileParts);
