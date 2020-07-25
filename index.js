@@ -29,15 +29,21 @@ module.exports = function include_plugin(md, options) {
     while ((cap = includeRe.exec(src))) {
       filePath = path.resolve(rootdir, cap[1].trim());
 
-      // check if circular reference
-      indexOfCircularRef = filesProcessed.indexOf(filePath);
-      if (indexOfCircularRef !== -1) {
-        throw new Error('Circular reference between ' + filePath + ' and ' + filesProcessed[indexOfCircularRef]);
+      try {
+        // check if circular reference
+        indexOfCircularRef = filesProcessed.indexOf(filePath);
+        if (indexOfCircularRef !== -1) {
+          throw new Error('Circular reference between ' + filePath + ' and ' + filesProcessed[indexOfCircularRef]);
+        }
+
+        // replace include by file content
+        mdSrc = fs.readFileSync(filePath, 'utf8');
+
+        mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed);
+      } catch (err) {
+        mdSrc = `<div class="error">${err}</div>`;
       }
 
-      // replace include by file content
-      mdSrc = fs.readFileSync(filePath, 'utf8');
-      mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed);
       src = src.slice(0, cap.index) + mdSrc + src.slice(cap.index + cap[0].length, src.length);
     }
     return src;
