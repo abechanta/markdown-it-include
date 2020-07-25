@@ -41,7 +41,7 @@ module.exports = function include_plugin(md, options) {
 
         mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed);
       } catch (err) {
-        mdSrc = `<div class="error">${err}</div>`;
+        mdSrc = '<div class="error">' + err + '</div>';
       }
 
       src = src.slice(0, cap.index) + mdSrc + src.slice(cap.index + cap[0].length, src.length);
@@ -50,7 +50,7 @@ module.exports = function include_plugin(md, options) {
   }
 
   function _includeFileParts(state) {
-    const rootdir = typeof root === "function" ? root() : root;
+    var rootdir = typeof root === "function" ? root() : root;
     state.src = _replaceIncludeByContent(state.src, rootdir);
   }
 
